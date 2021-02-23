@@ -2,6 +2,10 @@
   - [Example](#example)
 
 # Nestjs Elegant Command Line Interface Hammer
+[![NPM Version](https://img.shields.io/npm/v/nestjs-eclih.svg?style=flat)]()
+[![NPM License](https://img.shields.io/npm/l/all-contributors.svg?style=flat)](https://github.com/charlesxsh/nestjs-eclih/blob/master/LICENSE)
+
+
 nestjs-eclih aims to provide the tools to build powerful CLI with simple decorators.
 Nestjs provides the powerful dependency injection system. Commander provides the flexible and concrete CLI tools. nestjs-commander combines their advantanges together!
 
