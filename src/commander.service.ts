@@ -1,4 +1,4 @@
-import { Inject, Injectable, Logger } from "@nestjs/common";
+import { Inject, Injectable, Logger, OnModuleInit } from "@nestjs/common";
 import { ModuleRef } from "@nestjs/core";
 import { Command, ParseOptions } from "commander";
 import { NC_CPROVIDERS, NC_CPROVIDER_CHILD_CMDS, NC_CPROVIDER_CMD } from "./metadatas";
@@ -23,14 +23,22 @@ export interface CommandMetadata {
 }
 
 @Injectable()
-export class CommanderService {
+export class CommanderService implements OnModuleInit {
 
     private readonly logger = new Logger(CommanderService.name);
     
     constructor(
         @Inject(COMMANDER_ROOT_CMD) private readonly command:Command,
         private moduleRef: ModuleRef){
-            this.init();
+            
+    }
+
+    /**
+     * Since CommanderService are going to retrive instance from module for command's action,
+     * instance and instance's dependencies are only available until onModuleInit.
+     */
+    onModuleInit() {
+        this.init();
     }
 
     private init(): void {
@@ -60,6 +68,7 @@ export class CommanderService {
             }
             for(const childCmdMeta of childCmdMetas){
                 const childCmd = new Command(childCmdMeta.command.def);
+                console.log(cpTargetInstance);
                 const childCmdAction = cpTargetInstance[childCmdMeta.cpPropertyKey].bind(cpTargetInstance)
                 childCmd.action(childCmdAction);
                 parentCmd.addCommand(childCmd);
