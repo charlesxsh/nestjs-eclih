@@ -19,9 +19,13 @@ import { CommandProvider, Command, CommanderModule, bootstrapCli } from "nestjs-
 @CommandProvider()
 class HelloProvider {
 
-    @Command()
-    hello(){
-        console.log("hello");
+    @Command({
+      options: [
+        { flags: "-n, --name <name>" }
+      ]
+    })
+    hello(options){
+        console.log("hello", options.name);
     }
 }
 
@@ -49,11 +53,11 @@ Options:
   -h, --help      display help for command
 
 Commands:
-  hello
+  hello [options]
   help [command]  display help for command
 
-$ ts-node hello.ts hello
-hello
+$ ts-node hello.ts hello -n husky
+hello husky
 ```
 
 See more examples in [examples](./examples)
