@@ -28,9 +28,7 @@ export class CommanderService implements OnModuleInit {
   constructor(
     @Inject(COMMANDER_ROOT_CMD) private readonly command: Command,
     private moduleRef: ModuleRef,
-  ) {
-    this.init();
-  }
+  ) {}
 
   /**
    * Since CommanderService are going to retrive instance from module for command's action,
@@ -65,6 +63,10 @@ export class CommanderService implements OnModuleInit {
         );
       }
 
+      this.logger.log(
+        `Found command provider ${cpTargetInstance.constructor.name}`,
+      );
+
       // Prepare parent command for all child commands defined inside of command provider class
       let parentCmd: Command = null;
       if (targetMeta.command) {
@@ -94,7 +96,7 @@ export class CommanderService implements OnModuleInit {
         if (childCmdMeta.cmdCfg.options) {
           for (const optCfg of childCmdMeta.cmdCfg.options) {
             const opt = new Option(optCfg.flags, optCfg.description);
-            opt.required = !!optCfg.required;
+            opt.mandatory = !!optCfg.mandatory;
             childCmd.addOption(opt);
           }
         }

@@ -4,25 +4,27 @@ import { Command } from '../src/command.decorator';
 import { CommanderModule } from '../src/commander.module';
 import { bootstrapCli } from '../src/helper';
 
-class MagicOperation {
-  hello() {
-    console.log('hello');
-  }
-}
-
 @CommandProvider()
 class HelloProvider {
-  constructor(private op: MagicOperation) {}
-
-  @Command()
-  hello() {
-    this.op.hello();
+  @Command({
+    options: [
+      {
+        flags: '-n, --name <name>',
+      },
+      {
+        flags: '-an, --another <abc>',
+        mandatory: true,
+      },
+    ],
+  })
+  hello(options) {
+    console.log('hello world', options.name, options.another);
   }
 }
 
 @Module({
   imports: [CommanderModule],
-  providers: [HelloProvider, MagicOperation],
+  providers: [HelloProvider],
 })
 export class AppModule {}
 
