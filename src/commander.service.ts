@@ -1,13 +1,9 @@
-import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ModuleRef } from '@nestjs/core';
 import { Command, Option, ParseOptions } from 'commander';
 import { CommandConfig } from './command.decorator';
-import {
-  NC_CPROVIDERS,
-  NC_CPROVIDER_CHILD_CMDS,
-  NC_CPROVIDER_CMD,
-} from './metadatas';
 import { COMMANDER_ROOT_CMD } from './tokens';
+import { Inject, Injectable, Logger, OnModuleInit } from '@nestjs/common';
+import { NC_CPROVIDERS, NC_CPROVIDER_CHILD_CMDS } from './metadatas';
 
 export interface CommandProviderTargetMetadata {
   target: any;
@@ -26,7 +22,7 @@ export interface CommandMetadata {
 }
 
 @Injectable()
-export class CommanderService {
+export class CommanderService implements OnModuleInit {
   private readonly logger = new Logger(CommanderService.name);
 
   constructor(
@@ -37,17 +33,28 @@ export class CommanderService {
   }
 
   /**
+   * Since CommanderService are going to retrive instance from module for command's action,
+   * instance and instance's dependencies are only available until onModuleInit.
+   */
+  onModuleInit() {
+    this.init();
+  }
+
+  /**
    * Retrievd instance(marked with @CommandProvider) from Nestjs's module and
    * initialize corresponding commands and options.
    */
   private init(): void {
+    // Find all classes marked with @CommandProvider
     const targetMetas: CommandProviderTargetMetadata[] = Reflect.getMetadata(
       NC_CPROVIDERS,
       CommanderService,
     );
+
     if (!targetMetas) {
       return;
     }
+
     for (const targetMeta of targetMetas) {
       const cpTargetInstance = this.moduleRef.get(targetMeta.target, {
         strict: false,
@@ -68,6 +75,7 @@ export class CommanderService {
         parentCmd = this.command;
       }
 
+      // Find all command's metadata in the class marked with @CommandProvider
       const childCmdMetas: CommandMetadata[] = Reflect.getMetadata(
         NC_CPROVIDER_CHILD_CMDS,
         targetMeta.target,

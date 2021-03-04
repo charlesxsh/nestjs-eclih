@@ -4,13 +4,22 @@ import { Command } from "../src/command.decorator";
 import { CommanderModule } from "../src/commander.module";
 import { bootstrapCli } from "../src/helper";
 
+class MagicOperation {
+    hello(){
+        console.log("hello")
+    }
+}
 
 @CommandProvider()
 class HelloProvider {
-    
+
+    constructor(private op: MagicOperation){
+
+    }
+
     @Command()
     hello(){
-        console.log("hello");
+        this.op.hello();
     }
 }
 
@@ -19,7 +28,8 @@ class HelloProvider {
         CommanderModule
     ],
     providers:[
-        HelloProvider
+        HelloProvider,
+        MagicOperation
     ]
 })
 export class AppModule {}
