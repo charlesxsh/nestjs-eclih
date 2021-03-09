@@ -87,7 +87,7 @@ export class CommanderService implements OnModuleInit {
       }
       for (const childCmdMeta of childCmdMetas) {
         // Initialize command object from metadata
-        const childCmd = new Command(childCmdMeta.cmdCfg.name);
+        const childCmd = parentCmd.command(childCmdMeta.cmdCfg.name);
         if (childCmdMeta.cmdCfg.description) {
           childCmd.description(childCmdMeta.cmdCfg.description);
         }
