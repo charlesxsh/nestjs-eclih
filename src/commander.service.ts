@@ -102,7 +102,7 @@ export class CommanderService implements OnModuleInit {
             }
 
             if (optCfg.choices) {
-              opt.default(optCfg.choices);
+              opt.choices(optCfg.choices);
             }
             childCmd.addOption(opt);
           }
