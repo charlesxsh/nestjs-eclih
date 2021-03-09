@@ -8,9 +8,15 @@ import { bootstrapCli } from '../src/helper';
 class HelloProvider {
   @Command({
     name: 'hello <name>',
+    options: [
+      {
+        flags: '-a, --another <abc>',
+        mandatory: true,
+      },
+    ],
   })
-  hello(name) {
-    console.log('hello world', name);
+  hello(name, options) {
+    console.log('hello world', name, options);
   }
 }
 

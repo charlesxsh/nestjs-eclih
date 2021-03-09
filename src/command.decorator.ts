@@ -11,6 +11,8 @@ export interface OptionConfig {
   flags: string;
   description?: string;
   mandatory?: boolean;
+  default?: string;
+  choices?: string[];
 }
 
 /**

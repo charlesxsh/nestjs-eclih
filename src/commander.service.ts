@@ -97,6 +97,13 @@ export class CommanderService implements OnModuleInit {
           for (const optCfg of childCmdMeta.cmdCfg.options) {
             const opt = new Option(optCfg.flags, optCfg.description);
             opt.mandatory = !!optCfg.mandatory;
+            if (optCfg.default) {
+              opt.default(optCfg.default);
+            }
+
+            if (optCfg.choices) {
+              opt.default(optCfg.choices);
+            }
             childCmd.addOption(opt);
           }
         }
@@ -106,9 +113,6 @@ export class CommanderService implements OnModuleInit {
           childCmdMeta.cpPropertyKey
         ].bind(cpTargetInstance);
         childCmd.action(childCmdAction);
-
-        // Add initialized command to the parent
-        parentCmd.addCommand(childCmd);
 
         this.logger.log(
           `Added new child command '${childCmdMeta.cmdCfg.name}'`,
