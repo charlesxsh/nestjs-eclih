@@ -1,6 +1,3 @@
-import { Command } from "./command.decorator";
+import { Command } from './command.decorator';
 
-
-describe('Command Decorator', () => {
-
-});
+describe('Command Decorator', () => {});

@@ -25,7 +25,7 @@ class HelloProvider {
 
     @Command({
       options: [
-        { flags: "-n, --name <name>" }
+        { nameAndArgs: "-n, --name <name>" }
       ]
     })
     hello(options){

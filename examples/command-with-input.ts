@@ -7,10 +7,10 @@ import { bootstrapCli } from '../src/helper';
 @CommandProvider()
 class HelloProvider {
   @Command({
-    name: 'hello <name>',
+    nameAndArgs: 'hello <name>',
     options: [
       {
-        flags: '-a, --another <abc>',
+        nameAndArgs: '-a, --another <abc>',
         mandatory: true,
       },
     ],

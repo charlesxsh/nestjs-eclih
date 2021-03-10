@@ -6,7 +6,7 @@ import { bootstrapCli } from '../src/helper';
 
 @CommandProvider()
 class HelloProvider {
-  @Command({ name: 'hellohey' })
+  @Command({ nameAndArgs: 'hellohey' })
   hello() {
     console.log('hello world');
   }

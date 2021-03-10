@@ -1,15 +1,30 @@
 import 'reflect-metadata';
 import { CommanderService } from './commander.service';
-import { NC_CPROVIDERS, NC_CPROVIDER_CMD } from './metadatas';
+import { NC_CPROVIDERS } from './metadatas';
+import { CommandConfig, CommandProviderTargetMetadata } from './types';
 
-export function CommandProvider(command?: string): ClassDecorator {
+export function CommandProvider(
+  cmdCfg?: CommandConfig | string,
+): ClassDecorator {
   return function (target) {
-    const targets = Reflect.getMetadata(NC_CPROVIDERS, CommanderService) || [];
+    const targets: CommandProviderTargetMetadata[] =
+      Reflect.getMetadata(NC_CPROVIDERS, CommanderService) || [];
+    if (typeof cmdCfg === 'string') {
+      cmdCfg = {
+        nameAndArgs: cmdCfg,
+      };
+    }
+
+    if (cmdCfg) {
+      if (!cmdCfg.nameAndArgs) {
+        cmdCfg.nameAndArgs = target.name;
+      }
+    }
+
     targets.push({
       target,
-      command,
+      cmdCfg,
     });
     Reflect.defineMetadata(NC_CPROVIDERS, targets, CommanderService);
-    Reflect.defineMetadata(NC_CPROVIDER_CMD, command, target);
   };
 }

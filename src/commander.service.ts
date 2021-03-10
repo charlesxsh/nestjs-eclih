@@ -1,25 +1,13 @@
 import { ModuleRef } from '@nestjs/core';
-import { Command, Option, ParseOptions } from 'commander';
-import { CommandConfig } from './command.decorator';
+import { alias, aliases, Command, Option, ParseOptions } from 'commander';
 import { COMMANDER_ROOT_CMD } from './tokens';
 import { Inject, Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { NC_CPROVIDERS, NC_CPROVIDER_CHILD_CMDS } from './metadatas';
-
-export interface CommandProviderTargetMetadata {
-  target: any;
-  command?: string;
-}
-
-export interface CommandMetadata {
-  // Command Provider Target (class)
-  cpTarget: any;
-
-  // Command Provider's key (function will be used as command's action)
-  cpPropertyKey: any;
-
-  // Command's configuration
-  cmdCfg: CommandConfig;
-}
+import {
+  CommandConfig,
+  CommandMetadata,
+  CommandProviderTargetMetadata,
+} from './types';
 
 @Injectable()
 export class CommanderService implements OnModuleInit {
@@ -39,27 +27,66 @@ export class CommanderService implements OnModuleInit {
   }
 
   /**
+   * Add a new subcommand to parent command by given CommandConfig
+   * @param parent Command going to be append
+   * @param cfg Subcommand's configuration
+   * @returns New created subcommand
+   */
+  private addSubCommandByCfg(parent: Command, cfg: CommandConfig): Command {
+    const newCmd = parent.command(cfg.nameAndArgs);
+
+    // Initialize the command's properties
+    if (cfg.description) {
+      newCmd.description(cfg.description);
+    }
+    if (cfg.alias) {
+      newCmd.alias(cfg.alias);
+    }
+
+    if (cfg.aliases) {
+      newCmd.aliases(cfg.aliases);
+    }
+
+    // Initialize the options for the command
+    if (cfg.options) {
+      for (const optCfg of cfg.options) {
+        const opt = new Option(optCfg.nameAndArgs, optCfg.description);
+        opt.mandatory = !!optCfg.mandatory;
+        if (optCfg.default) {
+          opt.default(optCfg.default);
+        }
+        if (optCfg.choices) {
+          opt.choices(optCfg.choices);
+        }
+        newCmd.addOption(opt);
+      }
+    }
+
+    return newCmd as Command;
+  }
+
+  /**
    * Retrievd instance(marked with @CommandProvider) from Nestjs's module and
    * initialize corresponding commands and options.
    */
   private init(): void {
     // Find all classes marked with @CommandProvider
-    const targetMetas: CommandProviderTargetMetadata[] = Reflect.getMetadata(
+    const cpTargetMetas: CommandProviderTargetMetadata[] = Reflect.getMetadata(
       NC_CPROVIDERS,
       CommanderService,
     );
 
-    if (!targetMetas) {
+    if (!cpTargetMetas) {
       return;
     }
 
-    for (const targetMeta of targetMetas) {
-      const cpTargetInstance = this.moduleRef.get(targetMeta.target, {
+    for (const cpTargetMeta of cpTargetMetas) {
+      const cpTargetInstance = this.moduleRef.get(cpTargetMeta.target, {
         strict: false,
       });
       if (!cpTargetInstance) {
         throw new Error(
-          `Cannot find instance of ${targetMeta.target.name}, please make sure it is available in module provider array or marked as @Injectable()`,
+          `Cannot find instance of ${cpTargetMeta.target.name}, please make sure it is available in module provider array or marked as @Injectable()`,
         );
       }
 
@@ -69,10 +96,11 @@ export class CommanderService implements OnModuleInit {
 
       // Prepare parent command for all child commands defined inside of command provider class
       let parentCmd: Command = null;
-      if (targetMeta.command) {
-        parentCmd = new Command(targetMeta.command) as Command;
-        this.command.addCommand(parentCmd);
-        this.logger.log(`Added new command '${targetMeta.command}'`);
+      if (cpTargetMeta.cmdCfg) {
+        parentCmd = this.addSubCommandByCfg(this.command, cpTargetMeta.cmdCfg);
+        this.logger.log(
+          `Added new command '${cpTargetMeta.cmdCfg.nameAndArgs}'`,
+        );
       } else {
         parentCmd = this.command;
       }
@@ -80,42 +108,27 @@ export class CommanderService implements OnModuleInit {
       // Find all command's metadata in the class marked with @CommandProvider
       const childCmdMetas: CommandMetadata[] = Reflect.getMetadata(
         NC_CPROVIDER_CHILD_CMDS,
-        targetMeta.target,
+        cpTargetMeta.target,
       );
       if (!childCmdMetas) {
         continue;
       }
       for (const childCmdMeta of childCmdMetas) {
         // Initialize command object from metadata
-        const childCmd = parentCmd.command(childCmdMeta.cmdCfg.name);
-        if (childCmdMeta.cmdCfg.description) {
-          childCmd.description(childCmdMeta.cmdCfg.description);
-        }
-
-        // Initialize the options for the command
-        if (childCmdMeta.cmdCfg.options) {
-          for (const optCfg of childCmdMeta.cmdCfg.options) {
-            const opt = new Option(optCfg.flags, optCfg.description);
-            opt.mandatory = !!optCfg.mandatory;
-            if (optCfg.default) {
-              opt.default(optCfg.default);
-            }
-
-            if (optCfg.choices) {
-              opt.choices(optCfg.choices);
-            }
-            childCmd.addOption(opt);
-          }
-        }
-
+        const childCmd = this.addSubCommandByCfg(
+          parentCmd,
+          childCmdMeta.cmdCfg,
+        );
         // Initialized the command's action
         const childCmdAction = cpTargetInstance[
           childCmdMeta.cpPropertyKey
         ].bind(cpTargetInstance);
+
+        // Set action to command
         childCmd.action(childCmdAction);
 
         this.logger.log(
-          `Added new child command '${childCmdMeta.cmdCfg.name}'`,
+          `Added new child command '${childCmdMeta.cmdCfg.nameAndArgs}'`,
         );
       }
     }

@@ -9,10 +9,10 @@ class HelloProvider {
   @Command({
     options: [
       {
-        flags: '-n, --name <name>',
+        nameAndArgs: '-n, --name <name>',
       },
       {
-        flags: '-an, --another <abc>',
+        nameAndArgs: '-an, --another <abc>',
         mandatory: true,
       },
     ],
