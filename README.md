@@ -11,7 +11,7 @@
 
 # Nestjs Elegant Command Line Interface Hammer
 [![NPM Version](http://img.shields.io/npm/v/nestjs-eclih.svg?style=flat)](https://www.npmjs.org/package/nestjs-eclih)
-[![NPM Downloads](https://img.shields.io/npm/dm/nestjs-eclih.svg?style=flat)](https://npmcharts.com/compare/commander?minimal=true)
+[![NPM Downloads](https://img.shields.io/npm/dm/nestjs-eclih.svg?style=flat)](https://npmcharts.com/compare/nestjs-eclih?minimal=true)
 [![NPM License](https://img.shields.io/npm/l/all-contributors.svg?style=flat)](https://github.com/charlesxsh/nestjs-eclih/blob/master/LICENSE)
 
 
