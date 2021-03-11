@@ -90,7 +90,7 @@ export class CommanderService implements OnModuleInit {
         );
       }
 
-      this.logger.log(
+      this.logger.debug(
         `Found command provider ${cpTargetInstance.constructor.name}`,
       );
 
@@ -98,7 +98,7 @@ export class CommanderService implements OnModuleInit {
       let parentCmd: Command = null;
       if (cpTargetMeta.cmdCfg) {
         parentCmd = this.addSubCommandByCfg(this.command, cpTargetMeta.cmdCfg);
-        this.logger.log(
+        this.logger.debug(
           `Added new command '${cpTargetMeta.cmdCfg.nameAndArgs}'`,
         );
       } else {
@@ -127,7 +127,7 @@ export class CommanderService implements OnModuleInit {
         // Set action to command
         childCmd.action(childCmdAction);
 
-        this.logger.log(
+        this.logger.debug(
           `Added new child command '${childCmdMeta.cmdCfg.nameAndArgs}'`,
         );
       }

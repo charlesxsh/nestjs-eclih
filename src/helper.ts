@@ -12,7 +12,7 @@ async function bootstrapCommanderSvc(
 ): Promise<CommanderService> {
   if (!options) {
     options = {
-      logger: true,
+      logger: ['log'],
       abortOnError: true,
     };
   }
