@@ -1,10 +1,14 @@
 import 'reflect-metadata';
 import { CommanderService } from './commander.service';
 import { NC_CPROVIDERS } from './metadatas';
-import { CommandConfig, CommandProviderTargetMetadata } from './types';
+import {
+  CommandConfig,
+  CommandProviderTargetMetadata,
+  Constructor,
+} from './types';
 
 export function CommandProvider(
-  cmdCfg?: CommandConfig | string,
+  cmdCfg?: CommandConfig | string | Constructor,
 ): ClassDecorator {
   return function (target) {
     const targets: CommandProviderTargetMetadata[] =
@@ -12,6 +16,12 @@ export function CommandProvider(
     if (typeof cmdCfg === 'string') {
       cmdCfg = {
         nameAndArgs: cmdCfg,
+      };
+    }
+    // If passed like @CommandProvider(SomeClass), is shorthand for @CommandProvider({provider:SomeClass})
+    else if (typeof cmdCfg === 'function') {
+      cmdCfg = {
+        provider: cmdCfg,
       };
     }
 

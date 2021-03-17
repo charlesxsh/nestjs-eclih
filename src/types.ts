@@ -1,9 +1,11 @@
+export type Constructor = new (...args) => any;
 export interface CommandConfig {
   nameAndArgs?: string;
   description?: string;
   options?: OptionConfig[];
   alias?: string;
   aliases?: string[];
+  provider?: Constructor;
 }
 
 export interface OptionConfig {
