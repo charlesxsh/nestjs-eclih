@@ -1,5 +1,9 @@
 - [Nestjs Elegant Command Line Interface Hammer](#nestjs-elegant-command-line-interface-hammer)
   - [Commander.js](#commanderjs)
+  - [Features](#features)
+    - [Full support of Commander.js](#full-support-of-commanderjs)
+    - [Partial Command Definition](#partial-command-definition)
+    - [Command of Command](#command-of-command)
   - [Example](#example)
   - [Tutorial](#tutorial)
     - [@CommandProvider](#commandprovider)
@@ -20,6 +24,18 @@ Nestjs provides the powerful dependency injection system. Commander provides the
 
 ## Commander.js
 nestjs-eclih utilized [commander.js](https://github.com/tj/commander.js) as CLI driver. All grammers of command and option are excatly same.
+
+## Features
+
+### Full support of Commander.js
+See [examples/hello.ts](./examples/hello.ts)
+
+
+### Partial Command Definition 
+See [examples/provider-of-provider](./examples/command-partial-define.ts)
+
+### Command of Command
+See [examples/provider-of-provider](./examples/provider-of-provider.ts)
 
 ## Example
 
