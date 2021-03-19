@@ -1,0 +1,1 @@
+npm version patch && npm run prepublish && npm publish
