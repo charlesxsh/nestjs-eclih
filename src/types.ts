@@ -12,7 +12,7 @@ export interface OptionConfig {
   nameAndArgs: string;
   description?: string;
   mandatory?: boolean;
-  default?: string;
+  default?: any;
   choices?: string[];
 }
 
