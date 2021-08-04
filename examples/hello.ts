@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Logger, Module } from '@nestjs/common';
 import { CommandProvider } from '../src/command-provider.decorator';
 import { Command } from '../src/command.decorator';
 import { CommanderModule } from '../src/commander.module';

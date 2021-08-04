@@ -10,13 +10,12 @@ async function bootstrapCommanderSvc(
   appModule: any,
   options?: NestApplicationContextOptions,
 ): Promise<CommanderService> {
-  if (!options) {
-    options = {
-      logger: ['log'],
+    const finalOptions = {
       abortOnError: true,
-    };
-  }
-  const app = await NestFactory.createApplicationContext(appModule, options);
+      ...options
+    } as NestApplicationContextOptions;
+  
+  const app = await NestFactory.createApplicationContext(appModule, finalOptions);
   const svc = app.get(CommanderService);
   if (!svc) {
     throw new Error('Failed to bootstrap CommanderService');
