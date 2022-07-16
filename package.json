@@ -1,6 +1,6 @@
 {
   "name": "nestjs-eclih",
-  "version": "0.0.14",
+  "version": "0.0.15",
   "description": "Build beautify, powerful, elegant CLI with Nestjs",
   "author": "Shihao Xia <charlesxsh@hotmail.com>",
   "private": false,
